@@ -1,4 +1,4 @@
-import { model, models, Schema, Document, Types } from "mongoose";
+import { model, models, Schema, Document } from "mongoose";
 
 export interface IImage extends Document {
   title: string;
@@ -7,7 +7,7 @@ export interface IImage extends Document {
   secureUrl: string; // Use string instead of URL for Mongoose compatibility
   width?: number;
   height?: number;
-  config?: Record<string, any>; // or `object`, but this is safer
+  config?: Record<string, unkonwn>; // or `object`, but this is safer
   transformationUrl?: string;
   aspectRatio?: string;
   color?: string;
