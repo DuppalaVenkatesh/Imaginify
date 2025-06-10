@@ -7,7 +7,7 @@ export interface IImage extends Document {
   secureUrl: string; // Use string instead of URL for Mongoose compatibility
   width?: number;
   height?: number;
-  config?: Record<string, unkonwn>; // or `object`, but this is safer
+  config?: Record<string, unknown>; // or `object`, but this is safer
   transformationUrl?: string;
   aspectRatio?: string;
   color?: string;
