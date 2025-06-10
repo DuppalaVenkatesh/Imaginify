@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import mongoose, { Mongoose } from "mongoose";
 
 const MONGODB_URL = process.env.MONGODB_URL;
@@ -7,18 +8,27 @@ interface MongooseConnection {
   promise: Promise<Mongoose> | null;
 }
 
-const cached: MongooseConnection = global.mongoose ?? {
+// ✅ Extend the global object correctly
+declare global {
+  namespace NodeJS {
+    interface Global {
+      mongoose: MongooseConnection;
+    }
+  }
+}
+
+// ✅ Use type assertion to safely access global.mongoose
+const globalWithMongoose = global as typeof global & {
+  mongoose?: MongooseConnection;
+};
+
+const cached: MongooseConnection = globalWithMongoose.mongoose ?? {
   conn: null,
   promise: null,
 };
 
-if (!global.mongoose) {
-  global.mongoose = cached;
-}
-
 export const connectToDatabase = async () => {
   if (cached.conn) return cached.conn;
-
   if (!MONGODB_URL) throw new Error("Missing Mongodb Url");
 
   cached.promise =
@@ -29,5 +39,8 @@ export const connectToDatabase = async () => {
     });
 
   cached.conn = await cached.promise;
+
+  globalWithMongoose.mongoose = cached;
+
   return cached.conn;
 };

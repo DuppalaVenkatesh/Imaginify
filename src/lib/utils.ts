@@ -145,33 +145,39 @@ export const download = (url: string, filename: string): void => {
 };
 
 // DEEP MERGE OBJECTS
-export const deepMergeObjects = <T extends Record<string, unknown>>(
-  obj1: T,
-  obj2: Partial<T> | null | undefined
-): T => {
+export const deepMergeObjects = (
+  obj1: Record<string, unknown>,
+  obj2: Record<string, unknown>
+): Record<string, unknown> => {
   if (obj2 === null || obj2 === undefined) {
     return obj1;
   }
 
-  const output = { ...obj2 };
+  const output: Record<string, unknown> = { ...obj2 };
 
   for (const key in obj1) {
     if (Object.prototype.hasOwnProperty.call(obj1, key)) {
+      const val1 = obj1[key];
+      const val2 = obj2[key];
+
       if (
-        obj1[key] &&
-        typeof obj1[key] === "object" &&
-        obj2[key] &&
-        typeof obj2[key] === "object"
+        val1 &&
+        typeof val1 === "object" &&
+        val2 &&
+        typeof val2 === "object" &&
+        !Array.isArray(val1) &&
+        !Array.isArray(val2)
       ) {
         output[key] = deepMergeObjects(
-          obj1[key] as Record<string, unknown>,
-          obj2[key] as Record<string, unknown>
+          val1 as Record<string, unknown>,
+          val2 as Record<string, unknown>
         );
       } else {
-        output[key] = obj1[key];
+        output[key] = val1;
       }
     }
   }
 
-  return output as T;
+  return output;
 };
+
