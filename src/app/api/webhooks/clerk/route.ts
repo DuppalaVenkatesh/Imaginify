@@ -1,12 +1,11 @@
 /* eslint-disable camelcase */
-import { clerkClient } from "@clerk/nextjs";
+import { clerkClient } from "@clerk/clerk-sdk-node";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
 import { createUser, deleteUser, updateUser } from "@/lib/actions/user.actions";
-import { CreateUserParams } from "@/types";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
@@ -20,7 +19,7 @@ export async function POST(req: Request) {
 
   // Get the headers
   const headerPayload = await headers();
-  const svix_id =  headerPayload.get("svix-id");
+  const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
   const svix_signature = headerPayload.get("svix-signature");
 
@@ -62,7 +61,7 @@ export async function POST(req: Request) {
   if (eventType === "user.created") {
     const { id, email_addresses, image_url, first_name, last_name, username } = evt.data;
 
-    const user:CreateUserParams = {
+    const user = {
       clerkId: id,
       email: email_addresses[0].email_address,
       username: username!,
